@@ -4,6 +4,8 @@ FairLance is a testnet-only freelance milestone escrow with community dispute re
 
 > Hackathon MVP. Do not use with real funds. The contract has not been audited.
 
+Pitch deck: [docs/FairLance_Pitch_Deck.pdf](docs/FairLance_Pitch_Deck.pdf)
+
 ## What works
 
 - Create and fully fund a project with 1-20 native-ETH milestones
