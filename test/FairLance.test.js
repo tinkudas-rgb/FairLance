@@ -59,4 +59,14 @@ describe("FairLance", function () {
     await fair.connect(j1).unstake(stake);
     expect((await fair.jurors(j1.address)).stake).to.equal(0);
   });
+  it("does not add a re-staking juror to the pool twice", async () => {
+    const stake = ethers.parseEther("0.1");
+    await fair.connect(j1).stakeAsJuror({value: stake});
+    await fair.connect(j1).unstake(stake);
+    await fair.connect(j1).stakeAsJuror({value: stake});
+    expect(await fair.jurorPoolLength()).to.equal(1);
+    await fair.connect(j2).stakeAsJuror({value: stake});
+    await createAndSubmit();
+    await expect(fair.connect(client).openDispute(1, 0, "ipfs://e")).to.be.revertedWith("Need 3 eligible jurors");
+  });
 });
