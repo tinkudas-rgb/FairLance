@@ -231,7 +231,10 @@ contract FairLance {
         if (eachReward > 0) {
             for (uint256 i; i < 3; ++i) {
                 address juror = d.jurors[i];
-                if (d.votedForFreelancer[juror] == freelancerWon) jurors[juror].stake += eachReward;
+                if (d.votedForFreelancer[juror] == freelancerWon) {
+                    jurors[juror].stake += eachReward;
+                    if (jurors[juror].stake >= MIN_JUROR_STAKE) jurors[juror].active = true;
+                }
             }
         }
         uint256 distributed = eachReward * winners;
