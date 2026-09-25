@@ -56,6 +56,7 @@ contract FairLance {
     mapping(address => Juror) public jurors;
     mapping(address => uint256) public activeAssignments;
     address[] public jurorPool;
+    mapping(address => bool) private inJurorPool;
     mapping(uint256 => Dispute) private disputes;
 
     bool private locked;
@@ -133,7 +134,10 @@ contract FairLance {
         j.stake += msg.value;
         if (!j.active && j.stake >= MIN_JUROR_STAKE) {
             j.active = true;
-            jurorPool.push(msg.sender);
+            if (!inJurorPool[msg.sender]) {
+                inJurorPool[msg.sender] = true;
+                jurorPool.push(msg.sender);
+            }
         }
         emit JurorStaked(msg.sender, j.stake);
     }
