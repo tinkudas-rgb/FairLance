@@ -59,6 +59,26 @@ describe("FairLance", function () {
     await fair.connect(j1).unstake(stake);
     expect((await fair.jurors(j1.address)).stake).to.equal(0);
   });
+  it("reactivates a juror when a reward restores a slashed stake", async () => {
+    const stake = ethers.parseEther("0.01");
+    for (const j of [j1, j2, j3]) await fair.connect(j).stakeAsJuror({ value: stake });
+    await fair.connect(client).createProject(freelancer.address, "job", [one, one], { value: 2n * one });
+    for (let i = 0; i < 2; i++) await fair.connect(freelancer).submitWork(1, i, ethers.id("work"), "ipfs://work");
+    for (let i = 0; i < 2; i++) await fair.connect(client).openDispute(1, i, "ipfs://evidence");
+    const byAddress = new Map([j1, j2, j3].map(j => [j.address, j]));
+    const selected = (await fair.getDispute(1)).selectedJurors;
+    await fair.connect(byAddress.get(selected[0])).castVote(1, false);
+    await fair.connect(byAddress.get(selected[1])).castVote(1, false);
+    await fair.connect(byAddress.get(selected[2])).castVote(1, true);
+    const slashed = selected[2];
+    expect((await fair.jurors(slashed)).active).to.equal(false);
+    for (const address of (await fair.getDispute(2)).selectedJurors) {
+      await fair.connect(byAddress.get(address)).castVote(2, true);
+    }
+    const restored = await fair.jurors(slashed);
+    expect(restored.stake).to.be.gte(stake);
+    expect(restored.active).to.equal(true);
+  });
   it("does not add a re-staking juror to the pool twice", async () => {
     const stake = ethers.parseEther("0.1");
     await fair.connect(j1).stakeAsJuror({value: stake});
