@@ -21,7 +21,7 @@ Pitch deck: [docs/FairLance_Pitch_Deck.pdf](docs/FairLance_Pitch_Deck.pdf)
 - Client, freelancer, and juror frontend views
 - Onchain project and milestone inspector
 - Sepolia and Base Sepolia wallet support
-- Five passing contract tests
+- Seven passing contract tests
 
 ## MVP simplifications
 
@@ -47,7 +47,7 @@ npm test
 npm run compile
 ```
 
-Expected: `5 passing`.
+Expected: `7 passing`.
 
 ### Deploy to Sepolia
 
